@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-br" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+
+    <link rel="stylesheet" href="/deps/bootstrap/css/bootstrap.min.css">
+    
+    <link rel="stylesheet" href="/styles/base.css">
+    <link rel="stylesheet" href="/styles/login.css">
+</head>
+
+<body class="d-flex align-items-center justify-content-center column-gap-5">
+    <div id="login-inputs" class="card d-grid row-gap-4 p-4">
+        <div class="d-grid">
+            <p class="title mb-0 text-center">Financeiro</p>
+            <p class="subtitle mb-0 text-center">Seu controle financeiro em um só lugar</p>
+        </div>
+        <div class="d-grid row-gap-3">
+            <div>
+                <label for="inp-username" class="form-label">Usuário</label>
+                <input type="text" class="form-control"name="username" id="inp-username">
+            </div>
+            <div class="d-flex">
+                <div class="me-3">
+                    <label for="inp-password" class="form-label">Senha</label>
+                    <input type="password" class="form-control" name="password" id="inp-password">
+                </div>
+                <div>
+                    <label for="inp-password-confirm" class="form-label">Confirmar Senha</label>
+                    <input type="password" class="form-control" name="password_confirm" id="inp-password-confirm">
+                </div>
+            </div>
+            <div>
+                <label for="inp-email" class="form-label">E-mail</label>
+                <input type="email" class="form-control" name="email" id="inp-email">
+            </div>
+            <div class="d-flex">
+                <div class="me-3">
+                    <label for="inp-first-name" class="form-label">Primeiro Nome</label>
+                    <input type="text" class="form-control" name="first_name" id="inp-first-name">
+                </div>
+                <div>
+                    <label for="inp-last-name" class="form-label">Último Nome</label>
+                    <input type="text" class="form-control" name="last_name" id="inp-last-name" onkeydown="if (event.key === 'Enter') document.getElementById('btn-create').click()">
+                </div>
+            </div>
+        </div>
+        <div class="d-flex div-links">
+            <p class="mb-0 me-1">Já possui uma conta?</p>
+            <a href="/ui/login.html">acesse aqui</a>
+        </div>
+        <button class="btn primary" id="btn-create">criar conta</button>
+    </div>
+    <img src="/imgs/animations/data-extraction-pana.svg">
+
+    <div class="modal fade" id="modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="modalLabel">TITLE</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script src="/deps/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/deps/jquery-4.0.0.min.js"></script>
+<script type="module" src="/scripts/login.js"></script>
+
+</html>

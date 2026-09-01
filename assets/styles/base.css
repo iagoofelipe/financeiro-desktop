@@ -1,0 +1,141 @@
+:root {
+    --primary-color: #F67928;
+    --subtitle-color: var(--bs-secondary-color);
+}
+
+body {
+    /* background-color: #202020; */
+    padding: 1rem;
+}
+
+* {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+}
+
+.h-line {
+    width: stretch;
+    height: 1px;
+    background-color: #000;
+    opacity: .25;
+    margin: 1rem 0;
+}
+
+.v-line {
+    width: 1px;
+    height: stretch;
+    background-color: #000;
+    opacity: .25;
+    margin: 0 1rem;
+}
+
+.title, .title-1 {
+    font-weight: 500;
+    font-size: 1.25rem;
+}
+
+.title-2 {
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.title-3, .title-3-bold {
+    color: #8D8D8D;
+    font-size: .9rem;
+    font-weight: 400;
+}
+
+.title-3-bold {
+    font-weight: 500;
+}
+
+.btn, .btn-outline {
+    i {
+        font-size: 15pt;
+        color: var(--subtitle-color);
+    }
+
+    svg {
+        height: 20px;
+        width: 20px;
+    }
+}
+
+.btn.primary {
+    background-color: var(--primary-color);
+    color: #ffff;
+}
+
+.h-line-ignore-parent-padding {
+    margin-inline-start: -1rem !important;
+    margin-inline-end: -1rem !important;
+}
+
+.v-line-ignore-parent-padding {
+    margin-top: -1rem !important;
+    margin-bottom: -1rem !important;
+}
+
+.btn-outline {
+    background-color: white;
+    color: var(--subtitle-color);
+    border: .5px solid var(--bs-border-color);
+    border-radius: var(--bs-btn-border-radius);
+
+    font-size: 11pt;
+}
+
+.btn-outline:has(svg) {
+    padding: .5rem;
+}
+
+.btn-rotate * {
+    transition: transform 0.5s ease;
+    display: inline-block;
+}
+
+.btn-rotated * {
+    transform: rotate(180deg);
+}
+
+.dropdown-item:active, .dropdown-item.active {
+    background-color: var(--primary-color);
+}
+
+[class^="form"].required {
+    border-color: #a70909;
+    box-shadow: 0 0 0 .25rem rgba(255, 0, 0, .25);
+}
+
+.table {
+    border: var(--bs-card-border-width) solid var(--bs-card-border-color);
+    border-radius: var(--bs-card-border-radius);
+    overflow: hidden;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.table thead th {
+    background-color: #f8f9fa;
+    font-weight: 500;
+    padding: 15px;
+}
+
+.table tbody td {
+    vertical-align: middle;
+    padding: 15px;
+    color: #666;
+}
+
+.table tbody tr td:first-child {
+    font-weight: bold;
+    color: #000;
+}
+
+.table tbody tr:last-child td {
+    border: none;
+}
+
+.icon-progress, .icon-not-progress {
+    width: 20px !important;
+}

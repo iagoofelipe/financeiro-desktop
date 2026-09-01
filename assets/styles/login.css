@@ -1,0 +1,36 @@
+body {
+    height: 100vh;
+    /* background-color: #202020; */
+}
+
+img {
+    height: 55%;
+}
+
+.div-links {
+    color: var(--subtitle-color);
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+#login-inputs {
+    /* background-color: white;
+    border-radius: 1rem; */
+
+    .title {
+        font-size: 30pt;
+    }
+
+    .subtitle {
+        font-size: 18pt;
+    }
+}
+
+@media screen and (max-width: 1205px) {
+    img {
+        display: none;
+    }
+}
