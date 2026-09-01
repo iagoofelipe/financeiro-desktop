@@ -2,7 +2,7 @@ import webview
 from pathlib import Path
 from enum import Enum, auto
 
-from src.view.loginview import LoginView
+from src.model.appmodel import AppModel
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
@@ -12,7 +12,7 @@ class AppView:
         Home = auto()
 
     def __init__(self):
-        self._login_view = LoginView()
+        self._model = AppModel.getInstance()
 
         self._window = webview.create_window(
             title='Financeiro', 
@@ -23,7 +23,7 @@ class AppView:
         )
 
     @property
-    def loginView(self): return self._login_view
+    def loginView(self): return self._model
 
     def setUiById(self, ui:UI):
         match ui:
