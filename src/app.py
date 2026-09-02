@@ -1,5 +1,5 @@
-
 import webview
+import sys
 
 from src.model.appmodel import AppModel
 from src.view.appview import AppView
@@ -12,5 +12,5 @@ class FinanceiroApp:
         self._controller = AppController(self._view)
 
     def exec(self):
-        # webview.start(self._controller.initialize, http_server=True, debug=True)
-        webview.start(self._controller.initialize, http_server=True)
+        webview.start(self._controller.initialize, http_server=True, debug=len(sys.argv) > 1 and  sys.argv[1] == 'DEBUG')
+        # webview.start(self._controller.initialize, http_server=True)

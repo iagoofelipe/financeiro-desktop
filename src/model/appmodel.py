@@ -1,15 +1,20 @@
 from configparser import ConfigParser
 import requests
 import os
+from dotenv import load_dotenv
+
+from src.model.consts import BASE_DIR, CFG_FILE
 
 class AppModel:
     _instance = None
 
     def __init__(self):
-        self._token = ''
+        self._headers = {}
         self._error = ''
-        self._host = 'http://127.0.0.1:8000/api'
         self._authenticated = False
+        load_dotenv(BASE_DIR / '.env')
+
+        self._host = os.environ.get('API_HOST', 'http://127.0.0.1:8000/api')
 
     @classmethod
     def getInstance(cls):
@@ -18,13 +23,11 @@ class AppModel:
         return cls._instance
 
     def initialize(self):
-        file = os.path.join(os.environ['TEMP'], 'financeiro.cfg')
-
-        if not os.path.exists(file):
+        if not os.path.exists(CFG_FILE):
             return
         
         config = ConfigParser()
-        with open(file) as f:
+        with open(CFG_FILE) as f:
             config.read_file(f)
 
         if not config.has_option('Authentication', 'username') or not config.has_option('Authentication', 'password'):
@@ -36,19 +39,81 @@ class AppModel:
     @property
     def authenticated(self): return self._authenticated
 
-    def auth(self, username:str, password:str):
+    def auth(self, username:str, password:str, remember=False):
         response = requests.post(self._host+'/auth', {'username': username, 'password': password})
-        success = response.status_code == 200
-        self._token = response.json()['token'] if success else ''
-        self._authenticated = success
-        return success
+        self._authenticated = response.status_code == 200
+
+        if self._authenticated:
+            self._headers = {'Authorization': f'Token {response.json()['token']}'}
+            self._user = requests.get(self._host+'/getUser', headers=self._headers).json()
+            self._user['fullname'] = f'{self._user['first_name']} {self._user['last_name']}'
+
+        else:
+            self._headers.clear()
+
+        if remember:
+            with open(CFG_FILE, 'w') as f:
+                cfg = ConfigParser()
+                cfg.update({'Authentication': {'username': username, 'password': password}})
+                cfg.write(f)
+
+        return self._authenticated
 
     def logout(self):
         self._authenticated = False
-        self._token = ''
+        self._headers.clear()
 
     def createAccount(self, data:dict) -> tuple[bool, str]:
         response = requests.post(self._host+'/createAccount', json=data)
         success = response.status_code == 200
         return success, (response.json()['detail'] if not success else '')
 
+    def getUserFullName(self): return self._user['fullname']
+
+    def getInvoiceByCard(self, params:dict):
+        response = dict(success=False, error='', data=None)
+        r = requests.get(self._host+'/getInvoiceByCard', params, headers=self._headers)
+
+        if r.status_code == 200:
+            response['success'] = True
+            response['data'] = r.json()
+        else:
+            response['error'] = r.json()['detail']
+
+        return response
+
+    def getCards(self):
+        response = dict(success=False, error='', data=None)
+        r = requests.get(self._host+'/getCards', headers=self._headers)
+
+        if r.status_code == 200:
+            response['success'] = True
+            response['data'] = r.json()
+        else:
+            response['error'] = r.json()['detail']
+
+        return response
+
+    def getBalance(self, params):
+        response = dict(success=False, error='', data=None)
+        r = requests.get(self._host+'/balance', params, headers=self._headers)
+
+        if r.status_code == 200:
+            response['success'] = True
+            response['data'] = r.json()
+        else:
+            response['error'] = r.json()['detail']
+
+        return response
+
+    def getValuesByCategory(self, params):
+            response = dict(success=False, error='', data=None)
+            r = requests.get(self._host+'/valuesByCategory', params, headers=self._headers)
+    
+            if r.status_code == 200:
+                response['success'] = True
+                response['data'] = r.json()
+            else:
+                response['error'] = r.json()['detail']
+    
+            return response

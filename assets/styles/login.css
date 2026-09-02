@@ -8,7 +8,7 @@ img {
 }
 
 .div-links {
-    color: var(--subtitle-color);
+    color: var(--bs-secondary-color);
 }
 
 a {

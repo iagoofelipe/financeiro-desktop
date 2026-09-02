@@ -1,6 +1,5 @@
 :root {
     --primary-color: #F67928;
-    --subtitle-color: var(--bs-secondary-color);
 }
 
 body {
@@ -30,13 +29,11 @@ body {
 }
 
 .title, .title-1 {
-    font-weight: 500;
     font-size: 1.25rem;
 }
 
 .title-2 {
     font-size: 1.1rem;
-    font-weight: 500;
 }
 
 .title-3, .title-3-bold {
@@ -45,14 +42,15 @@ body {
     font-weight: 400;
 }
 
-.title-3-bold {
-    font-weight: 500;
+.title, .title-1, .title-2, .title-3-bold {
+    /* font-weight: 500; */
+    font-weight: bold;
 }
 
 .btn, .btn-outline {
     i {
         font-size: 15pt;
-        color: var(--subtitle-color);
+        color: var(--bs-secondary-color);
     }
 
     svg {
@@ -77,8 +75,8 @@ body {
 }
 
 .btn-outline {
-    background-color: white;
-    color: var(--subtitle-color);
+    background-color: var(--bs-body-bg);
+    /* color: var(--bs-secondary-color); */
     border: .5px solid var(--bs-border-color);
     border-radius: var(--bs-btn-border-radius);
 

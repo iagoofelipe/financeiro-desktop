@@ -6,6 +6,7 @@ $('#btn-create').on('click', on_create);
 async function on_auth() {
     const username = $('#inp-username').val();
     const password = $('#inp-password').val();
+    const remember = $('#inp-remember').prop('checked');
     
     if (!username || !password) {
         set_modal('Validação de Parâmetros', 'preencha todos os campos!', true, MODAL_FLAGS.HIDE_HEADER_BTN_CLOSE);
@@ -15,7 +16,7 @@ async function on_auth() {
     const form_controls = $('#login-inputs .form-control, #login-inputs .btn');
     form_controls.prop('disabled', true);
 
-    let response = await window.pywebview.api.loginView.auth(username, password);
+    let response = await window.pywebview.api.model.auth(username, password, remember);
     form_controls.prop('disabled', false);
 
     if (!response) {
@@ -50,7 +51,7 @@ export async function on_create() {
     }
     
     inp_components.prop('disabled', true);
-    let response = await window.pywebview.api.loginView.createAccount(inputs);
+    let response = await window.pywebview.api.model.createAccount(inputs);
     let success = response[0];
     let error = response[1];
     

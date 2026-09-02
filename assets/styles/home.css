@@ -1,0 +1,132 @@
+body {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+}
+
+main {
+    width: -webkit-fill-available;
+    height: -webkit-fill-available;
+}
+
+.home-nav-logo {
+    margin-right: auto;
+
+        img {
+        width: 30px;
+        height: 30px;
+    }
+}
+
+.home-nav:not(.offcanvas) {
+    width: 290px !important;
+}
+
+.home-nav {
+    .nav-link {
+        
+        * {
+            cursor: pointer;
+            color: var(--bs-secondary-color);
+            /* stroke: var(--bs-secondary-color); */
+            font-weight: 500;
+            font-size: 11pt;
+        }
+
+        svg {
+            height: 25px;
+            width: 25px;
+        }
+    }
+
+    .icon-panel-closed {
+        display: none;
+    }
+}
+
+.home-nav.collapsed {
+    width: 96px !important;
+    
+    span, .home-nav-logo, .icon-panel-opened {
+        display: none !important;
+    }
+
+    .icon-panel-closed {
+        display: block;
+    }
+}
+
+.nav-link-active {
+    background-color: var(--primary-color);
+
+    * {
+        color: var(--bs-body-color) !important;
+        /* stroke: var(--bs-body-color) !important; */
+    }
+}
+
+.home-nav-title {
+    /* color: black; */
+    font-size: 13pt;
+}
+
+#home-title {
+    color: var(--bs-secondary-color);
+}
+
+.card-status {
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 500;
+    display: inline-block;
+}
+
+.card-status-atrasado {
+    background-color: #f5a7a7;
+    color: #721c24;
+}
+
+.card-status-pendente {
+    background-color: #a7d9f5;
+    color: #0c5460;
+}
+
+.card-status-pago {
+    background-color: #9EEEC7;
+    color: #4A705E;
+}
+
+.reg-transactions svg {
+    height: 22px;
+    width: 22px;
+    color: var(--bs-secondary-color);
+}
+
+
+/* Desktop */
+@media screen and (min-width: 1024px) {
+    #btn-home-menu {
+        display: none !important;
+    }
+}
+
+/* Tablet e Desktop */
+@media screen and (min-width: 768px) {
+
+}
+
+/* Tablet */
+@media screen and (min-width: 768px) and (max-width: 1023px) {
+    
+}
+
+/* Mobile e Tablet */
+@media screen and (max-width: 1023px) {
+    .home-nav:not(.offcanvas) {
+        display: none !important;
+    }
+}
+
+/* Mobile */
+@media screen and (max-width: 767px) {
+}
