@@ -27,12 +27,12 @@ export default class CategoryChart extends EventTarget {
         }
 
         this.#jquery = $(
-            `<div class="card p-3 shadow-sm">
-                <div class="d-flex flex-row align-items-top justify-content-between">
+            `<div class="card p-3 h-100">
+                <div class="d-flex flex-row align-items-center justify-content-between">
                 <p class="title m-0">Categorias</p>
                 ${select_form}
                 </div>
-                <canvas id="canvas-chart" class="p-3"></canvas>
+                <canvas id="canvas-chart" class="p-3 mt-auto mb-auto" style="max-height: 360px;"></canvas>
             </div>`
         );
 

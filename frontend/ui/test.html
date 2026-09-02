@@ -10,7 +10,7 @@
 </head>
 
 <body>
-    <nav class="card d-flex home-nav flex-column p-3 shadow-sm me-3">
+    <nav class="card d-flex home-nav flex-column p-3 me-3">
         <div class="d-flex align-items-center justify-content-center">
             <div class="home-nav-logo d-flex align-items-center">
                 <img src="/imgs/logo.svg" alt="logo" class="me-2">
@@ -69,7 +69,7 @@
     </nav>
 
     <main class="d-flex flex-column">
-        <div class="card d-flex flex-row p-3 mb-3 shadow-sm home-card-top justify-content-between">
+        <div class="card d-flex flex-row p-3 mb-3 home-card-top justify-content-between">
             <div class="d-flex flex-row column-gap-3 align-items-center">
                 <button class="btn border-0 p-0" id="btn-home-menu" type="button" data-bs-toggle="offcanvas" data-bs-target="#nav-aside" aria-controls="nav-aside"><div class="replace" url="/imgs/icons/list.svg"></div></button>
                 <p class="title m-0" id="home-title"></p>
@@ -80,7 +80,126 @@
                 <button class="btn border-0 p-0"><div class="replace" url="/imgs/icons/bell-fill.svg"></div></button>
             </div>
         </div>
-        <div id="home-content" class="h-100 overflow-auto"></div>
+        <div id="home-content" class="h-100 overflow-auto">
+
+
+            <div class="container-dash d-flex flex-column row-gap-3 h-100">
+                <div class="top-cards card">
+                    <div class="d-flex justify-content-evenly content overflow-x-auto p-3">
+                        <div class="d-flex">
+                            <img src="/imgs/money-in.svg">
+                            <div class="ms-2 d-flex flex-column justify-content-center" style="width: 260px;">
+                                <span class="title-3-bold">Entradas</span>
+                                <div>
+                                    <span class="title-3-bold">R$</span>
+                                    <span class="title value-in"></span>
+                                </div>
+                                <div class="value-in-note">
+                                    <img src="/imgs/icons/not-progress.svg" class="icon-not-progress" hidden>
+                                    <img src="/imgs/icons/progress.svg" class="icon-progress" hidden>
+                                    <span class="title-3-bold text"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex">
+                            <img src="/imgs/money-out.svg">
+                            <div class="ms-2 d-flex flex-column justify-content-center" style="width: 260px;">
+                                <span class="title-3-bold">Saídas</span>
+                                <div>
+                                    <span class="title-3-bold">R$</span>
+                                    <span class="title value-out"></span>
+                                </div>
+                                <div class="value-out-note">
+                                    <img src="/imgs/icons/not-progress.svg" class="icon-not-progress" hidden>
+                                    <img src="/imgs/icons/progress.svg" class="icon-progress" hidden>
+                                    <span class="title-3-bold text"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex">
+                            <img src="/imgs/balance.svg">
+                            <div class="ms-2 d-flex flex-column justify-content-center" style="width: 140px;">
+                                <span class="title-3-bold">Saldo</span>
+                                <div>
+                                    <span class="title-3-bold">R$</span>
+                                    <span class="title value-balance"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row-gap-3 d-flex column-gap-3">
+                    <div id="chart-category" class="w-50"></div>
+                    <div class="card p-3 row-gap-3 w-50">
+                        <div class="d-flex flex-row align-items-top justify-content-between">
+                            <span class="title">Cartões</span>
+                            <select class="form-select w-auto select-card"></select>
+                        </div>
+                        <div class="field-card-accounted">
+                            <p class="m-0 fw-semibold">Valores Contabilizados</p>
+                            <span class="text">-</span>
+                        </div>
+                        <div class="field-card-pending">
+                            <p class="m-0 fw-semibold">Lançamentos Pendentes</p>
+                            <span class="text">-</span>
+                        </div>
+                        <div class="field-card-closing-date">
+                            <p class="m-0 fw-semibold">Fechamento</p>
+                            <span class="text">-</span>
+                        </div>
+                        <div class="field-card-due-date">
+                            <p class="m-0 fw-semibold">Vencimento</p>
+                            <span class="text">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card p-3 h-100">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="title">Transações</span>
+                        <select class="form form-select w-auto" id="filter-type" title="Tipo">
+                            <option value="" hidden>Tipo</option>
+                            <option value="in">Entrada</option>
+                            <option value="out">Saída</option>
+                        </select>
+                        <div class="input-group flex-nowrap w-auto" id="filter-type-group" style="display: none;">
+                            <select class="form form-select w-auto" title="Cartões">
+                                <option value="in">Entrada</option>
+                                <option value="out">Saída</option>
+                            </select>
+                            <div class="input-group-text p-0 ps-2 pe-2">
+                                <button type="button" class="btn-close" aria-label="Close" id="btn-filter-type-group"></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <hr>
+                        <div class="d-flex align-items-center column-gap-3">
+                            <img src="/imgs/icons/plus-circle-fill-green.svg" height="20" width="20">
+                            <div class="w-100 d-flex flex-column">
+                                <span class="fw-bold fs-5">Aula de violão</span>
+                                <span class="title-3-bold">20 Jan 26, 08h10</span>
+                            </div>
+                            <span  class="title-3-bold">R$</span>
+                            <span class="fw-bold fs-3">1.600,53</span>
+                        </div>
+                        <hr>
+                        <div class="d-flex align-items-center column-gap-3">
+                            <img src="/imgs/icons/dash-circle-fill-red.svg" height="20" width="20">
+                            <div class="w-100 d-flex flex-column">
+                                <span class="fw-bold fs-5">Aula de violão</span>
+                                <span class="title-3-bold">20 Jan 26, 08h10</span>
+                            </div>
+                            <span  class="title-3-bold">R$</span>
+                            <span class="fw-bold fs-3">1.600,53</span>
+                        </div>
+                        <hr>
+                    </div>
+                </div>
+            </div>
+
+        </div>
     </main>
 
     <div class="offcanvas offcanvas-start home-nav" tabindex="-1" id="nav-aside">

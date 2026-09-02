@@ -1,9 +1,9 @@
 import webview
 import sys
 
-from src.model.appmodel import AppModel
-from src.view.appview import AppView
-from src.controller.appcontroller import AppController
+from backend.model.appmodel import AppModel
+from backend.view.appview import AppView
+from backend.controller.appcontroller import AppController
 
 class FinanceiroApp:
     def __init__(self):

@@ -1,0 +1,115 @@
+<div class="container-dash d-flex flex-column row-gap-3 h-100">
+    <div class="top-cards card">
+        <div class="d-flex justify-content-evenly content overflow-x-auto p-3">
+            <div class="d-flex">
+                <img src="/imgs/money-in.svg">
+                <div class="ms-2 d-flex flex-column justify-content-center" style="width: 260px;">
+                    <span class="title-3-bold">Entradas</span>
+                    <div>
+                        <span class="title-3-bold">R$</span>
+                        <span class="title value-in"></span>
+                    </div>
+                    <div class="value-in-note">
+                        <img src="/imgs/icons/progress-down-red.svg" class="icon-not-progress" hidden>
+                        <img src="/imgs/icons/progress-up-green.svg" class="icon-progress" hidden>
+                        <span class="title-3-bold text"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex">
+                <img src="/imgs/money-out.svg">
+                <div class="ms-2 d-flex flex-column justify-content-center" style="width: 260px;">
+                    <span class="title-3-bold">Saídas</span>
+                    <div>
+                        <span class="title-3-bold">R$</span>
+                        <span class="title value-out"></span>
+                    </div>
+                    <div class="value-out-note">
+                        <img src="/imgs/icons/progress-up-red.svg" class="icon-not-progress" hidden>
+                        <img src="/imgs/icons/progress-down-green.svg" class="icon-progress" hidden>
+                        <span class="title-3-bold text"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex">
+                <img src="/imgs/balance.svg">
+                <div class="ms-2 d-flex flex-column justify-content-center" style="width: 140px;">
+                    <span class="title-3-bold">Saldo</span>
+                    <div>
+                        <span class="title-3-bold">R$</span>
+                        <span class="title value-balance"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row-gap-3 d-flex column-gap-3 h-100">
+        <div id="chart-category" class="w-50"></div>
+        <div class="card p-3 row-gap-3 w-50">
+            <div class="d-flex flex-row align-items-center justify-content-between">
+                <span class="title">Cartões</span>
+                <select class="form-select w-auto select-card"></select>
+            </div>
+            <div class="field-card-accounted">
+                <p class="m-0 fw-semibold">Valores Contabilizados</p>
+                <span class="text">-</span>
+            </div>
+            <div class="field-card-pending">
+                <p class="m-0 fw-semibold">Lançamentos Pendentes</p>
+                <span class="text">-</span>
+            </div>
+            <div class="field-card-closing-date">
+                <p class="m-0 fw-semibold">Fechamento</p>
+                <span class="text">-</span>
+            </div>
+            <div class="field-card-due-date">
+                <p class="m-0 fw-semibold">Vencimento</p>
+                <span class="text">-</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="card p-3 h-100">
+        <div class="d-flex justify-content-between align-items-center">
+            <span class="title">Transações</span>
+            <select class="form form-select w-auto" id="filter-type" title="Tipo">
+                <option value="" hidden>Tipo</option>
+                <option value="in">Entrada</option>
+                <option value="out">Saída</option>
+            </select>
+            <div class="input-group flex-nowrap w-auto" id="filter-type-group" style="display: none;">
+                <select class="form form-select w-auto" title="Cartões">
+                    <option value="in">Entrada</option>
+                    <option value="out">Saída</option>
+                </select>
+                <div class="input-group-text p-0 ps-2 pe-2">
+                    <button type="button" class="btn-close" aria-label="Close" id="btn-filter-type-group"></button>
+                </div>
+            </div>
+        </div>
+        <div>
+            <hr>
+            <div class="d-flex align-items-center column-gap-2">
+                <img src="/imgs/icons/plus-circle-fill-green.svg" height="20" width="20">
+                <div class="w-100 d-flex flex-column">
+                    <span class="fs-5">Aula de violão</span>
+                    <span class="title-3">20 Jan 26, 08h10</span>
+                </div>
+                <span  class="title-3">R$</span>
+                <span class="fs-3">1.600,53</span>
+            </div>
+            <hr>
+            <div class="d-flex align-items-center column-gap-2">
+                <img src="/imgs/icons/dash-circle-fill-red.svg" height="20" width="20">
+                <div class="w-100 d-flex flex-column">
+                    <span class="fs-5">Aula de violão</span>
+                    <span class="title-3">20 Jan 26, 08h10</span>
+                </div>
+                <span  class="title-3">R$</span>
+                <span class="fs-3">1.600,53</span>
+            </div>
+            <hr>
+        </div>
+    </div>
+</div>

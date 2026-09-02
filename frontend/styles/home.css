@@ -105,9 +105,9 @@ main {
 
 /* Desktop */
 @media screen and (min-width: 1024px) {
-    #btn-home-menu {
+    /* #btn-home-menu {
         display: none !important;
-    }
+    } */
 }
 
 /* Tablet e Desktop */
@@ -122,9 +122,13 @@ main {
 
 /* Mobile e Tablet */
 @media screen and (max-width: 1023px) {
-    .home-nav:not(.offcanvas) {
+    /* .home-nav:not(.offcanvas) {
         display: none !important;
-    }
+    } */
+}
+
+.home-nav:not(.offcanvas) {
+    display: none !important;
 }
 
 /* Mobile */

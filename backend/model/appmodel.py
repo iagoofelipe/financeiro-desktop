@@ -2,17 +2,21 @@ from configparser import ConfigParser
 import requests
 import os
 from dotenv import load_dotenv
+from threading import Thread
 
-from src.model.consts import BASE_DIR, CFG_FILE
+from backend.model.consts import BASE_DIR, CFG_FILE
+from backend.event import EventTarget
 
-class AppModel:
+class AppModel(EventTarget):
     _instance = None
 
     def __init__(self):
+        super().__init__()
         self._headers = {}
         self._error = ''
         self._authenticated = False
         load_dotenv(BASE_DIR / '.env')
+        self._check_connection = True
 
         self._host = os.environ.get('API_HOST', 'http://127.0.0.1:8000/api')
 
@@ -22,19 +26,29 @@ class AppModel:
             cls._instance = AppModel()
         return cls._instance
 
+    def close(self):
+        print('closing the application...')
+        self._check_connection = False
+
     def initialize(self):
+        # checking server connection
+        try:
+            requests.get(self._host)
+        except (requests.exceptions.ConnectTimeout, requests.exceptions.ConnectionError):
+            return False
+
         if not os.path.exists(CFG_FILE):
-            return
+            return True
         
         config = ConfigParser()
         with open(CFG_FILE) as f:
             config.read_file(f)
 
         if not config.has_option('Authentication', 'username') or not config.has_option('Authentication', 'password'):
-            return
+            return True
 
         self.auth(config['Authentication']['username'], config['Authentication']['password'])
-
+        return True
 
     @property
     def authenticated(self): return self._authenticated
@@ -107,13 +121,13 @@ class AppModel:
         return response
 
     def getValuesByCategory(self, params):
-            response = dict(success=False, error='', data=None)
-            r = requests.get(self._host+'/valuesByCategory', params, headers=self._headers)
-    
-            if r.status_code == 200:
-                response['success'] = True
-                response['data'] = r.json()
-            else:
-                response['error'] = r.json()['detail']
-    
-            return response
+        response = dict(success=False, error='', data=None)
+        r = requests.get(self._host+'/valuesByCategory', params, headers=self._headers)
+
+        if r.status_code == 200:
+            response['success'] = True
+            response['data'] = r.json()
+        else:
+            response['error'] = r.json()['detail']
+
+        return response
