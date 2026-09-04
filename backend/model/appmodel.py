@@ -25,6 +25,11 @@ class AppModel(ServerAPI):
     def close(self):
         self._check_connection = False
 
+    def logout(self):
+        if os.path.exists(CFG_FILE):
+            os.remove(CFG_FILE)
+        return super().logout()
+
     def initialize(self):
         if not self.checkConnection():
             return False

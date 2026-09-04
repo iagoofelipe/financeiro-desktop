@@ -22,6 +22,24 @@ class Card:
     closing_previous_month:bool
 
 @dataclass
+class Registry:
+    id: int
+    title:str
+    value:float
+    value_formatted:str
+    status:str
+    occurrance:str
+    occurrance_formatted:str
+    description:str|None
+    category:str
+    date_ref:str
+    type_in:bool
+    card_name:str
+    responsable_name:str
+    responsable_id:int
+    installment_formatted:str
+
+@dataclass
 class StatisticsCategory:
     title:str
     total:float
@@ -139,7 +157,16 @@ class ServerAPI:
     def updateInstallmentsAll(self): raise NotImplementedError()
 
     # Registry
-    def getRegistries(self): raise NotImplementedError()
+    def getRegistries(self, params={}) -> list[dict|Registry] | None:
+        r = requests.get(self._host+'/getRegistries', params, headers=self._headers)
+        success = r.status_code == 200
+        if not success:
+            self._error = r.json()['detail']
+            return
+
+        return [ Registry(**d) for d in r.json() ] if params.get('parse_dataclass') else r.json()
+
+        
     def getRegistryById(self, id:int): raise NotImplementedError()
     def addRegistry(self): raise NotImplementedError()
     def hasRegistries(self): raise NotImplementedError()
@@ -152,7 +179,7 @@ class ServerAPI:
     def addResponsable(self): raise NotImplementedError()
 
     # Statistics
-    def valuesByCategory(self, date_ref:str=None, limit:int=None, parse_dataclass=True) -> None | dict | dict[Literal['in', 'out'], list[StatisticsCategory]]:
+    def valuesByCategory(self, date_ref:str=None, limit:int=None, parse_dataclass=False) -> None | dict | dict[Literal['in', 'out'], list[StatisticsCategory]]:
         params = {}
 
         if date_ref is not None: params['date_ref'] = date_ref

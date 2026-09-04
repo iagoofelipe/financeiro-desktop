@@ -1,3 +1,4 @@
+import { replace_from_url, setup_select_input } from "./tools/utils.js";
 import CategoryChart from "/scripts/components/category-chart.js";
 // import { get_invoice_by_card } from "../tools/api/cards.js";
 // import { balance, values_by_category } from "../tools/api/statistics.js";
@@ -30,6 +31,12 @@ export default class DashboardView {
             const card = cards[i];
             jselect_card.append(`<option value="${card.id}">${card.name}</option>`)
         }
+
+        // atualizando icones
+        await replace_from_url(jquery);
+
+        // configurando UI
+        setup_select_input(jquery, 'filter-transaction', 'filter-transaction-group', 'btn-filter-transaction-group');
 
         let category_chart = new CategoryChart({
             data: {in: [], out: []},
@@ -114,6 +121,12 @@ export default class DashboardView {
         });
 
         this.#category_chart.setValues(response.success? response.data : {in: [], out: []});
+    }
+
+    async updateTransactions() {
+        let params = { date_ref: this.#date_ref };
+
+        let response = await window.pywebview.api.model.getRegistries();
     }
 
     //-----------------------------------------------------------------------------

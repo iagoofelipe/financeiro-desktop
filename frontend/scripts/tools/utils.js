@@ -37,3 +37,77 @@ export function set_modal(title, html_body, show = true, flags = 0) {
         modal.show();
     }
 }
+
+export async function replace_from_url(root) {
+    let elements = $(root).find('.replace');
+    let len = elements.length;
+
+    if (!('urls' in globalThis)) {
+        globalThis.urls = {};
+    }
+
+    for(let i=0; i<len; i++) {
+        let e = $(elements[i]);
+        let url = e.attr('url');
+
+        if (!(url in globalThis.urls)) {
+            let response = await fetch(url);
+            globalThis.urls[url] = await response.text();
+        }
+        
+        e.replaceWith(globalThis.urls[url]);
+    }
+}
+
+export function setup_select_input(root, id_select, id_select_group, id_btn_reset) {
+    let jroot = $(root);
+    let btn = '#'+id_btn_reset;
+    let select = '#'+id_select;
+    let select_group = '#'+id_select_group;
+    let select_group_form = '#'+id_select_group+' .form';
+
+    jroot.find(select)
+        .attr('select-parent', select_group)
+        .show();
+    jroot.find(select_group)
+        .attr('select-parent', select)
+        .hide();
+    jroot.find(btn).attr('select-parent', select);
+
+    jroot.on('change', select, on_select_change);
+    jroot.on('change', select_group_form, on_selectGroup_change);
+    jroot.on('click', btn, on_btnReset_click);
+
+    function on_select_change(evt) {
+        let val = evt.currentTarget.value;
+        let obj = $(evt.currentTarget);
+        let select_group = $(obj.attr('select-parent'));
+        let form = select_group.find('.form');
+
+
+        console.log('select change', obj, parent, val);
+        obj.hide();
+        parent.show();
+        
+        if (form.val() != val)
+            form.val(val).change();
+    }
+
+    function on_selectGroup_change(evt) {
+        let val = evt.currentTarget.value;
+        let obj = $(evt.currentTarget);
+        let parent = $(obj.attr('select-parent'));
+
+        console.log('select-group change', obj, parent, val);
+        if (parent.val() != val)
+            parent.val(val).change();
+    }
+
+    function on_btnReset_click(evt) {
+        let obj = $(evt.currentTarget);
+        let parent = $(obj.attr('select-parent'));
+
+        parent.val('');
+        parent.show();
+    }
+}

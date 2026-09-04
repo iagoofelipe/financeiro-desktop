@@ -1,9 +1,13 @@
 :root {
     --primary-color: #F67928;
+    --bs-body-bg: #202020;
+}
+
+.card {
+    --bs-card-bg: #2c2c2c;
 }
 
 body {
-    /* background-color: #202020; */
     padding: 1rem;
 }
 

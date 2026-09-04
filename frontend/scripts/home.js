@@ -1,19 +1,10 @@
 // import RegistryView from "./nav-regs/view.js";
 import DashboardView from "./navdash.js";
+import { replace_from_url } from "./tools/utils.js";
 // import CreditCardView from "./cards.js";
 
 $(async () => {
-    let elements = $('.replace');
-    let len = elements.length;
-
-    for(let i=0; i<len; i++) {
-        let e = $(elements[i]);
-        let response = await fetch(e.attr('url'));
-        let svgText = await response.text();
-        
-        e.replaceWith(svgText);
-    }
-
+    await replace_from_url(document);
     $('.user-full-name').text(await window.pywebview.api.model.getUserFullName());
 
     let home_view = new HomeView();
@@ -30,6 +21,11 @@ class HomeView
         $('#btn-nav-collapse').click(this.#on_btnNavCollapse_clicked);
 
         $('.home-nav.offcanvas .nav-link').click(() => { $('.home-nav.offcanvas .close').click() });
+    }
+
+    async logout() {
+        await window.pywebview.api.model.logout();
+        window.location.href = '/ui/login.html';
     }
 
     async #on_navBtn_clicked(evt) {
@@ -55,14 +51,9 @@ class HomeView
         //     let cardsview = await CreditCardView.create(parent);
         //     break;
 
-        // case 'Sair':
-        //     let response = await $.get('/login/logout');
-        //     if (response.success)
-        //         window.location.reload();
-        //     else
-        //         alert('não foi possível realizar o logout');
-
-        //     return;
+        case 'Sair':
+            await this.logout();
+            return;
 
         default:
             console.log('nav option unset', title);
