@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 import requests, os
+from typing import Literal
 
 @dataclass
 class User:
@@ -9,6 +10,7 @@ class User:
     first_name:str
     last_name:str
     fullname: str
+    _dict:dict
 
 @dataclass
 class Card:
@@ -18,6 +20,12 @@ class Card:
     due_day:int
     limit:float
     closing_previous_month:bool
+
+@dataclass
+class StatisticsCategory:
+    title:str
+    total:float
+    total_formatted:str
 
 class ServerAPI:
     def __init__(self):
@@ -38,6 +46,14 @@ class ServerAPI:
     def user(self) -> User | None: return self._user
     @property
     def authenticated(self) -> bool: return self._authenticated
+
+    def checkConnection(self):
+        try:
+            success = requests.get(self._host+'/checkApi').status_code == 200
+        except (requests.exceptions.ConnectTimeout, requests.exceptions.ConnectionError):
+            success = False
+
+        return success
 
     #---------------------------------------------------------------
     # EndPoints
@@ -76,31 +92,39 @@ class ServerAPI:
             return
 
         user = response.json()
-        self._user = User(**user, fullname=f'{user['first_name']} {user['last_name']}')
+        user['fullname'] = f'{user['first_name']} {user['last_name']}'
+        self._user = User(**user, _dict=user)
+
         return self._user
         
     # Card
-    def getCards(self) -> dict[Card] | None:
+    def getCards(self, parse_dataclass=True) -> list[dict] | dict[int, Card] | None:
         response = requests.get(self._host+'/getCards', headers=self._headers)
         success = response.status_code == 200
+
         if not success:
             self._error = response.json()['detail']
+            return
 
-        return { d['id']: Card(**d) for d in response.json() } if success else None
+        j = response.json()
+        return { d['id']: Card(**d) for d in j } if parse_dataclass else j
+        # return response.json() if success else None
         
     def getCardById(self, id:int) -> Card:
         response = requests.get(f'{self._host}/getCard/{id}', headers=self._headers)
         success = response.status_code == 200
-        if not success:
-            self._error = response.json()['detail']
+        j = response.json()
 
-        return Card(**response.json()) if success else None
+        if not success:
+            self._error = j['detail']
+
+        return Card(**j) if success else None
 
     def addCard(self, name:str, closing_day:int, due_day:int, limit:float, closing_previous_month:bool=None) -> Card | None:
-        data = dict(name=name, closing_day=closing_day, due_day=due_day, limit=limit)
-        if closing_previous_month is not None: data['closing_previous_month'] = closing_previous_month
+        data = dict(name=name, closing_day=closing_day, due_day=due_day, limit=limit, closing_previous_month=closing_previous_month)
         response = requests.post(self._host+'/addCard', json=data, headers=self._headers)
         success = response.status_code == 200
+
         if not success:
             self._error = response.json()['detail']
 
@@ -128,7 +152,29 @@ class ServerAPI:
     def addResponsable(self): raise NotImplementedError()
 
     # Statistics
-    def valuesByCategory(self): raise NotImplementedError()
+    def valuesByCategory(self, date_ref:str=None, limit:int=None, parse_dataclass=True) -> None | dict | dict[Literal['in', 'out'], list[StatisticsCategory]]:
+        params = {}
+
+        if date_ref is not None: params['date_ref'] = date_ref
+        if limit is not None: params['limit'] = limit
+
+        r = requests.get(self._host+'/valuesByCategory', params, headers=self._headers)
+        success = r.status_code == 200
+
+        if not success:
+            self._error = r.json()['detail']
+            return
+
+        j = r.json()
+
+        if not parse_dataclass:
+            return j
+
+        data = {}
+        for k, v in j.items():
+            data[k] = [ StatisticsCategory(**d) for d in v ]
+        return data
+        
     def balance(self): raise NotImplementedError()
 
     #---------------------------------------------------------------
@@ -137,7 +183,7 @@ if __name__ == '__main__':
     # os.environ['API_HOST'] = 'http://192.168.1.22:8000/api'
     api = ServerAPI()
 
-    print(api.auth('teste', '1234'))
+    # print(api.auth('teste', '1234'))
 
     # print(api.createAccount('iagof', '1234', 'iago@email.com', 'Iago', 'Carvalho'))
 
@@ -151,3 +197,5 @@ if __name__ == '__main__':
     # print(api.getCardById(3))
 
     # print(api.addCard('Cartão de Teste', 5, 10, 1500, False))
+
+    print(api.checkConnection())
