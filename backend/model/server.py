@@ -86,7 +86,7 @@ class ServerAPI:
             self.getUser()
         else:
             self.logout()
-            self._error = response.json()['detail']
+            self._error = 'usuário ou senha incorretos'
 
         return success
         

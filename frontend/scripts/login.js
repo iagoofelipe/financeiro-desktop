@@ -49,7 +49,8 @@ export async function on_create() {
         set_modal('Validação de parâmetros', 'As senhas são diferentes!', true, MODAL_FLAGS.HIDE_HEADER_BTN_CLOSE);
         return;
     }
-    
+
+    delete inputs.password_confirm;
     inp_components.prop('disabled', true);
     let response = await window.pywebview.api.model.createAccount(inputs);
     let success = response[0];
