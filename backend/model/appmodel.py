@@ -3,6 +3,9 @@ import requests
 import os
 from dotenv import load_dotenv
 from threading import Thread
+import datetime as dt
+from dateutil.relativedelta import relativedelta
+from typing import Literal
 
 from backend.model.consts import BASE_DIR, CFG_FILE
 from backend.model.server import ServerAPI
@@ -12,9 +15,16 @@ class AppModel(ServerAPI):
 
     def __init__(self):
         load_dotenv(BASE_DIR / '.env')
-
         super().__init__()
+
         self._check_connection = True
+        self._cfg = ConfigParser()
+
+        if os.path.exists(CFG_FILE):
+            with open(CFG_FILE) as f:
+                self._cfg.read_file(f)
+
+        self._theme = self._cfg.get('UI', 'theme') if self._cfg.has_option('UI', 'theme') else 'light'
 
     @classmethod
     def getInstance(cls):
@@ -22,32 +32,40 @@ class AppModel(ServerAPI):
             cls._instance = AppModel()
         return cls._instance
 
+    def setTheme(self, theme:Literal['dark', 'light']):
+        self._update_cfg(UI={'theme': theme})
+        self._theme = theme
+
+    def getTheme(self) -> Literal['dark', 'light']:
+        return self._theme
+
     def close(self):
         self._check_connection = False
 
     def logout(self):
-        if os.path.exists(CFG_FILE):
-            os.remove(CFG_FILE)
+        self._update_cfg(Authentication={})
         return super().logout()
+
+    def _update_cfg(self, **params):
+        self._cfg.update(params)
+        with open(CFG_FILE, 'w') as f:
+            self._cfg.write(f)
 
     def initialize(self):
         if not self.checkConnection():
             return False
 
-        if not os.path.exists(CFG_FILE):
-            return True
-        
-        config = ConfigParser()
-        with open(CFG_FILE) as f:
-            config.read_file(f)
-
-        if not config.has_option('Authentication', 'username') or not config.has_option('Authentication', 'password'):
+        if not self._cfg.has_option('Authentication', 'username') or not self._cfg.has_option('Authentication', 'password'):
             return True
 
-        self.auth(config['Authentication']['username'], config['Authentication']['password'])
+        self.auth(self._cfg['Authentication']['username'], self._cfg['Authentication']['password'])
         return True
 
     def getUserFullName(self) -> str: return self._user.fullname if self._user else ''
+
+    def getDefaultYearMonth(self) -> str:
+        today = dt.date.today()
+        return (today if today.day <= 10 else today+relativedelta(months=1)).strftime('%Y-%m')
 
     def auth(self, username:str, password:str, remember=False):
         if not super().auth(username, password):

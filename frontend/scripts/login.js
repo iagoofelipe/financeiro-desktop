@@ -1,7 +1,17 @@
-import { MODAL_FLAGS, set_modal } from "./tools/utils.js";
+import { load_theme, MODAL_FLAGS, set_modal } from "./tools/utils.js";
 
-$('#btn-auth').on('click', on_auth);
-$('#btn-create').on('click', on_create);
+async function init() {
+    await load_theme();
+
+    $('#btn-auth').on('click', on_auth);
+    $('#btn-create').on('click', on_create);
+}
+
+if (window.pywebview && window.pywebview.api) {
+    await init();
+} else {
+    window.addEventListener('pywebviewready', init);
+}
 
 async function on_auth() {
     const username = $('#inp-username').val();

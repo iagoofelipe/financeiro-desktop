@@ -1,14 +1,7 @@
 // import RegistryView from "./nav-regs/view.js";
 import DashboardView from "./navdash.js";
-import { replace_from_url } from "./tools/utils.js";
+import { load_theme, replace_from_url, switch_theme } from "./tools/utils.js";
 // import CreditCardView from "./cards.js";
-
-$(async () => {
-    await replace_from_url(document);
-    $('.user-full-name').text(await window.pywebview.api.model.getUserFullName());
-
-    let home_view = new HomeView();
-});
 
 class HomeView
 {
@@ -18,9 +11,22 @@ class HomeView
         
         nav_btns.on('click', async (evt) => await this.#on_navBtn_clicked(evt));
         $(nav_btns[0]).click();
+
+        // vinculando eventos
         $('#btn-nav-collapse').click(this.#on_btnNavCollapse_clicked);
+        $('#btn-theme').click(async () => await switch_theme());
 
         $('.home-nav.offcanvas .nav-link').click(() => { $('.home-nav.offcanvas .close').click() });
+    }
+
+    static async create() {
+        await replace_from_url(document);
+        await load_theme();
+
+        $('.user-full-name').text(await window.pywebview.api.model.getUserFullName());
+        $('#filter-month-year').val(await window.pywebview.api.model.getDefaultYearMonth());
+        
+        return new HomeView();
     }
 
     async logout() {
@@ -78,3 +84,9 @@ class HomeView
         $('.home-nav').toggleClass('collapsed');
     }
 }
+
+
+if (window.pywebview && window.pywebview.api)
+        await HomeView.create();
+    else
+        window.addEventListener('pywebviewready', HomeView.create);

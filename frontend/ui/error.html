@@ -18,4 +18,16 @@
 <script src="/deps/bootstrap/js/bootstrap.bundle.min.js"></script>
 <script src="/deps/jquery-4.0.0.min.js"></script>
 
+<script type="module">
+
+import { load_theme } from "/scripts/tools/utils.js";
+
+if (window.pywebview && window.pywebview.api) {
+    await load_theme();
+} else {
+    window.addEventListener('pywebviewready', load_theme);
+}
+
+</script>
+
 </html>

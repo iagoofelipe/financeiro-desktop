@@ -65,15 +65,23 @@ export function setup_select_input(root, id_select, id_select_group, id_btn_rese
     let select = '#'+id_select;
     let select_group = '#'+id_select_group;
     let select_group_form = '#'+id_select_group+' .form';
+    
+    let jselect = jroot.find(select);
+    let jselect_group = jroot.find(select_group);
+    let jselect_group_form = jroot.find(select_group_form);
+    let jbtn = jroot.find(btn);
+    let has_selection = jselect.val() != '';
 
-    jroot.find(select).attr('select-parent', select_group).show();
-    jroot.find(select_group).hide();
-    jroot.find(select_group_form).attr('select-parent', select);
-    jroot.find(btn).attr({'select-parent': select, 'select-group-parent': select_group});
+    (has_selection? jselect_group : jselect).show();
+    (!has_selection? jselect_group : jselect).hide();
 
-    jroot.on('change', select, on_select_change);
-    jroot.on('change', select_group_form, on_selectGroup_change);
-    jroot.on('click', btn, on_btnReset_click);
+    jselect.attr('select-parent', select_group);
+    jselect_group_form.attr('select-parent', select);
+    jbtn.attr({'select-parent': select, 'select-group-parent': select_group});
+
+    jselect.on('change', on_select_change);
+    jselect_group_form.on('change', on_selectGroup_change);
+    jbtn.on('click', on_btnReset_click);
 
     function on_select_change(evt) {
         let val = evt.currentTarget.value;
@@ -106,4 +114,17 @@ export function setup_select_input(root, id_select, id_select_group, id_btn_rese
         select.show();
         select_group.hide();
     }
+}
+
+export async function load_theme() {
+    $('html').attr('data-bs-theme', await window.pywebview.api.model.getTheme());
+}
+
+export async function set_theme(theme) {
+    $('html').attr('data-bs-theme', theme);
+    await window.pywebview.api.model.setTheme(theme);
+}
+
+export async function switch_theme() {
+    await set_theme($('html').attr('data-bs-theme') == 'dark'? 'light' : 'dark');
 }

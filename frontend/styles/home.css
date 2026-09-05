@@ -60,7 +60,7 @@ main {
     background-color: var(--primary-color);
 
     * {
-        color: var(--bs-body-color) !important;
+        color: white !important;
         /* stroke: var(--bs-body-color) !important; */
     }
 }
