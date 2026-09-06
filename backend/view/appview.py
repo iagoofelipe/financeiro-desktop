@@ -29,3 +29,13 @@ class AppView:
             case self.UI.LOGIN: self._window.load_url('/ui/login.html')
             case self.UI.HOME:  self._window.load_url('/ui/home.html')
             case self.UI.ERROR:  self._window.load_url('/ui/error.html')
+
+    def setOfflineMode(self, arg:bool):
+        cmd = '''
+        $("[connection-trigger]").attr("disabled", {{OFFLINE}})
+        if (window.view) {
+            window.view.setOfflineMode({{OFFLINE}});
+        }
+        '''.replace('{{OFFLINE}}', 'true' if arg else 'false')
+
+        self._window.evaluate_js(cmd)

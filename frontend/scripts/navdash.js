@@ -127,7 +127,7 @@ export default class DashboardView {
         if (type_in == 'in')        params.type_in = 1;
         else if (type_in == 'out')  params.type_in = 0;
 
-        let response = await window.pywebview.api.model.getRegistries(params);
+        let response = await window.pywebview.api.model.getRegistries(params); // TODO: adicionar verificação em caso de erro e agendar função para quando a conexão retornar
         let struct = `
         <hr class="m-0">
         <div class="d-flex align-items-center column-gap-2 m-3">
@@ -162,8 +162,8 @@ export default class DashboardView {
         `;
 
         let jquery = this.#jquery.find('#container-transactions-content').html('');
-        for (const i in response) {
-            const data = response[i];
+        for (const i in response.data) {
+            const data = response.data[i];
             jquery.append(struct
                 .replaceAll('{{TITLE}}', data.title)
                 .replaceAll('{{DATE}}', data.occurrance_formatted)

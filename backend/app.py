@@ -1,5 +1,6 @@
 import webview
 import sys
+import logging as log
 
 from backend.model.appmodel import AppModel
 from backend.view.appview import AppView
@@ -12,5 +13,5 @@ class FinanceiroApp:
         self._controller = AppController(self._view)
 
     def exec(self):
-        webview.start(self._controller.initialize, http_server=True, debug=len(sys.argv) > 1 and  sys.argv[1] == 'DEBUG')
-        # webview.start(self._controller.initialize, http_server=True)
+        debug = len(sys.argv) > 1 and sys.argv[1] == 'DEBUG'
+        webview.start(self._controller.initialize, http_server=True, debug=debug)

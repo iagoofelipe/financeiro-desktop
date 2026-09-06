@@ -117,7 +117,16 @@ export function setup_select_input(root, id_select, id_select_group, id_btn_rese
 }
 
 export async function load_theme() {
-    $('html').attr('data-bs-theme', await window.pywebview.api.model.getTheme());
+    if (localStorage.theme || (window.pywebview && window.pywebview.api))
+        await _load_theme();
+    else
+        window.addEventListener('pywebviewready', _load_theme);
+}
+
+async function _load_theme() {
+    if (!localStorage.theme)
+        localStorage.theme = await window.pywebview.api.model.getTheme();
+    $('html').attr('data-bs-theme', localStorage.theme);
 }
 
 export async function set_theme(theme) {

@@ -1,17 +1,9 @@
 import { load_theme, MODAL_FLAGS, set_modal } from "./tools/utils.js";
 
-async function init() {
-    await load_theme();
+await load_theme();
 
-    $('#btn-auth').on('click', on_auth);
-    $('#btn-create').on('click', on_create);
-}
-
-if (window.pywebview && window.pywebview.api) {
-    await init();
-} else {
-    window.addEventListener('pywebviewready', init);
-}
+$('#btn-auth').on('click', on_auth);
+$('#btn-create').on('click', on_create);
 
 async function on_auth() {
     const username = $('#inp-username').val();
@@ -63,12 +55,10 @@ export async function on_create() {
     delete inputs.password_confirm;
     inp_components.prop('disabled', true);
     let response = await window.pywebview.api.model.createAccount(inputs);
-    let success = response[0];
-    let error = response[1];
     
     inp_components.prop('disabled', false);
-    if (!success) {
-        set_modal('Criação de Usuário', error, true, MODAL_FLAGS.HIDE_HEADER_BTN_CLOSE);
+    if (!response.success) {
+        set_modal('Criação de Usuário', response.error, true, MODAL_FLAGS.HIDE_HEADER_BTN_CLOSE);
         return;
     }
 

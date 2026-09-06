@@ -3,6 +3,12 @@ import DashboardView from "./navdash.js";
 import { load_theme, replace_from_url, switch_theme } from "./tools/utils.js";
 // import CreditCardView from "./cards.js";
 
+await load_theme();
+
+class IView {
+    setOfflineMode() { throw new Error("NOT_IMPLEMENTED"); }
+}
+
 class HomeView
 {
     constructor() {
@@ -21,7 +27,6 @@ class HomeView
 
     static async create() {
         await replace_from_url(document);
-        await load_theme();
 
         $('.user-full-name').text(await window.pywebview.api.model.getUserFullName());
         $('#filter-month-year').val(await window.pywebview.api.model.getDefaultYearMonth());
@@ -85,8 +90,7 @@ class HomeView
     }
 }
 
-
 if (window.pywebview && window.pywebview.api)
-        await HomeView.create();
+        window.homeView = await HomeView.create();
     else
-        window.addEventListener('pywebviewready', HomeView.create);
+        window.addEventListener('pywebviewready', async () => window.homeView = await HomeView.create());

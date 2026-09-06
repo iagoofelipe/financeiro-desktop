@@ -4,7 +4,7 @@ identification properly
 -->
 
 <!DOCTYPE html>
-<html lang="pt-br" data-bs-theme="dark">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -38,12 +38,7 @@ identification properly
 <script type="module">
 
 import { load_theme } from "/scripts/tools/utils.js";
-
-if (window.pywebview && window.pywebview.api) {
-    await load_theme();
-} else {
-    window.addEventListener('pywebviewready', load_theme);
-}
+await load_theme();
 
 </script>
 

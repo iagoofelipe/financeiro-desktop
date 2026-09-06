@@ -1,8 +1,12 @@
-class EventTarget:
+import logging as log
+
+class EventHandler:
     def  __init__(self):
         self._callbacks = {}
 
     def emit(self, event:str, *args, **kwargs):
+        log.debug(f'[EventHandler] emitting event {event}')
+        
         if event not in self._callbacks:
             return
         

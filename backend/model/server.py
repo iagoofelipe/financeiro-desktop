@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 import requests, os
-from typing import Literal
 
 @dataclass
 class User:
@@ -22,44 +21,43 @@ class Card:
     closing_previous_month:bool
 
 @dataclass
-class Registry:
-    id: int
-    title:str
-    value:float
-    value_formatted:str
-    status:str
-    occurrance:str
-    occurrance_formatted:str
-    description:str|None
-    category:str
-    date_ref:str
-    type_in:bool
-    card_name:str
-    responsable_name:str
-    responsable_id:int
-    installment_formatted:str
-
-@dataclass
 class StatisticsCategory:
     title:str
     total:float
     total_formatted:str
 
+def connection_error(func):
+    def wrapper(self, *args, **kwargs):
+        try:
+            r = func(self, *args, **kwargs)
+        except requests.ConnectionError as e:
+            if self._conn_error_cb:
+                self._conn_error_cb()
+            if self._conn_error_keep_exception:
+                raise e
+            return {'success': False, 'error': 'erro de conexão com o servidor'}
+        return r
+    return wrapper
+
 class ServerAPI:
-    def __init__(self):
+    def __init__(self, conn_error_cb=None, conn_error_keep_exception=True):
         self._headers = {}
         self._user = None
         self._host = os.environ.get('API_HOST', 'http://127.0.0.1:8000/api')
-        self._error = ''
         self._authenticated = False
+        self._conn_error_cb = conn_error_cb
+        self._conn_error_keep_exception = conn_error_keep_exception
 
-    def errorMessage(self) -> str: return self._error
+        if not conn_error_cb and not conn_error_keep_exception:
+            raise ValueError('caso conn_error_keep_exception seja False, conn_error_cb deve ser especificado')
 
     def logout(self):
         self._user = None
         self._authenticated = False
         self._headers.clear()
 
+    #---------------------------------------------------------------
+    # propriedades
     @property
     def user(self) -> User | None: return self._user
     @property
@@ -77,6 +75,7 @@ class ServerAPI:
     # EndPoints
 
     # Account
+    @connection_error
     def auth(self, username:str, password:str) -> bool:
         response = requests.post(self._host+'/auth', {'username': username, 'password': password})
         success = response.status_code == 200
@@ -86,21 +85,16 @@ class ServerAPI:
             self.getUser()
         else:
             self.logout()
-            self._error = 'usuário ou senha incorretos'
 
         return success
         
-    def createAccount(self, username:str, password:str, email:str, first_name:str, last_name:str) -> bool:
-        data = dict(username=username, password=password, email=email, first_name=first_name, last_name=last_name)
-        response = requests.post(self._host+'/createAccount', json=data)
-        success = response.status_code == 200
-        if not success:
-            self._error = response.json()['detail']
-        return success
+    def createAccount(self, params:dict):
+        return self._request('POST', '/createAccount', default_headers=False, data_from_response=False, json=params)
         
-    def deleteAccount(self) -> bool:
-        return requests.post(self._host+'/deleteAccount', headers=self._headers).status_code == 200
+    def deleteAccount(self):
+        return self._request('POST', '/deleteAccount', data_from_response=False)
         
+    @connection_error
     def getUser(self) -> User | None:
         response = requests.get(self._host+'/getUser', headers=self._headers)
         self._authenticated = response.status_code == 200
@@ -116,57 +110,29 @@ class ServerAPI:
         return self._user
         
     # Card
-    def getCards(self, parse_dataclass=True) -> list[dict] | dict[int, Card] | None:
-        response = requests.get(self._host+'/getCards', headers=self._headers)
-        success = response.status_code == 200
-
-        if not success:
-            self._error = response.json()['detail']
-            return
-
-        j = response.json()
-        return { d['id']: Card(**d) for d in j } if parse_dataclass else j
-        # return response.json() if success else None
+    def getCards(self):
+        return self._request('GET', '/getCards')
         
-    def getCardById(self, id:int) -> Card:
-        response = requests.get(f'{self._host}/getCard/{id}', headers=self._headers)
-        success = response.status_code == 200
-        j = response.json()
+    def getCardById(self, id:int):
+        return self._request('GET', f'/getCard/{id}')
 
-        if not success:
-            self._error = j['detail']
-
-        return Card(**j) if success else None
-
-    def addCard(self, name:str, closing_day:int, due_day:int, limit:float, closing_previous_month:bool=None) -> Card | None:
-        data = dict(name=name, closing_day=closing_day, due_day=due_day, limit=limit, closing_previous_month=closing_previous_month)
-        response = requests.post(self._host+'/addCard', json=data, headers=self._headers)
-        success = response.status_code == 200
-
-        if not success:
-            self._error = response.json()['detail']
-
-        return Card(**response.json()) if success else None
+    def addCard(self, params:dict):
+        return self._request('POST', '/addCard', json=params)
 
     # Invoice
     def getInvoices(self): raise NotImplementedError()
     def getInvoiceById(self, id:int): raise NotImplementedError()
-    def getInvoiceByCard(self): raise NotImplementedError()
+
+    def getInvoiceByCard(self, params={}) -> dict:
+        return self._request('GET', '/getInvoiceByCard', params=params)
 
     # Installment
     def updateInstallmentsAll(self): raise NotImplementedError()
 
     # Registry
-    def getRegistries(self, params={}) -> list[dict|Registry] | None:
-        r = requests.get(self._host+'/getRegistries', params, headers=self._headers)
-        success = r.status_code == 200
-        if not success:
-            self._error = r.json()['detail']
-            return
+    def getRegistries(self, params={}):
+        return self._request('GET', '/getRegistries', params=params)
 
-        return [ Registry(**d) for d in r.json() ] if params.get('parse_dataclass') else r.json()
-
-        
     def getRegistryById(self, id:int): raise NotImplementedError()
     def addRegistry(self): raise NotImplementedError()
     def hasRegistries(self): raise NotImplementedError()
@@ -179,50 +145,35 @@ class ServerAPI:
     def addResponsable(self): raise NotImplementedError()
 
     # Statistics
-    def valuesByCategory(self, date_ref:str=None, limit:int=None, parse_dataclass=False) -> None | dict | dict[Literal['in', 'out'], list[StatisticsCategory]]:
-        params = {}
+    def getValuesByCategory(self, params={}):
+        return self._request('GET', '/valuesByCategory', params=params)
 
-        if date_ref is not None: params['date_ref'] = date_ref
-        if limit is not None: params['limit'] = limit
-
-        r = requests.get(self._host+'/valuesByCategory', params, headers=self._headers)
-        success = r.status_code == 200
-
-        if not success:
-            self._error = r.json()['detail']
-            return
-
-        j = r.json()
-
-        if not parse_dataclass:
-            return j
-
-        data = {}
-        for k, v in j.items():
-            data[k] = [ StatisticsCategory(**d) for d in v ]
-        return data
-        
-    def balance(self): raise NotImplementedError()
+    def getBalance(self, params={}):
+        return self._request('GET', '/balance', params=params)
 
     #---------------------------------------------------------------
+    @connection_error
+    def _request(self, method:str, endpoint:str, default_headers=True, data_from_response=True, **kwargs):
+        if default_headers:
+            kwargs['headers'] = self._headers
+
+        match method:
+            case 'GET':     response = requests.get(self._host+endpoint, **kwargs)
+            case 'POST':    response = requests.get(**kwargs)
+            case _:         raise ValueError(f'{method} invalid')
+            
+        result = dict(success=response.status_code == 200, error='', data=None)
+
+        if not result['success']:
+            result['error'] = response.json()['detail']
+        elif data_from_response:
+            result['data'] = response.json()
+
+        return result
 
 if __name__ == '__main__':
-    # os.environ['API_HOST'] = 'http://192.168.1.22:8000/api'
-    api = ServerAPI()
+    def conn_error_cb():
+        print('erro de conexão')
 
-    # print(api.auth('teste', '1234'))
-
-    # print(api.createAccount('iagof', '1234', 'iago@email.com', 'Iago', 'Carvalho'))
-
-    # print(api.auth('iagof', '1234'))
-    # print(api.deleteAccount())
-
-    # print(api.user)
-
-    # print(api.getCards())
-
-    # print(api.getCardById(3))
-
-    # print(api.addCard('Cartão de Teste', 5, 10, 1500, False))
-
-    print(api.checkConnection())
+    api = ServerAPI(conn_error_cb=conn_error_cb, conn_error_keep_exception=True)
+    print(api.auth('iago', '1234'))
