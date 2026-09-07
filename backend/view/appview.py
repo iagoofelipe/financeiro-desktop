@@ -1,4 +1,5 @@
 import webview
+import ctypes
 
 from backend.model.appmodel import AppModel
 from backend.model.consts import BASE_DIR
@@ -18,6 +19,8 @@ class AppView:
             width=1400,
             height=800
         )
+
+        self._window.events.loaded += self.loadTheme
 
     @property
     def model(self): return self._model
@@ -39,3 +42,18 @@ class AppView:
         '''.replace('{{OFFLINE}}', 'true' if arg else 'false')
 
         self._window.evaluate_js(cmd)
+
+    def loadTheme(self):
+        DWMWA_USE_IMMERSIVE_DARK_MODE = 20
+        value = ctypes.c_int(1 if self._model.getTheme() == 'dark' else 0)
+
+        ctypes.windll.dwmapi.DwmSetWindowAttribute(
+            self._window.native.Handle.ToInt32(), 
+            DWMWA_USE_IMMERSIVE_DARK_MODE, 
+            ctypes.byref(value), 
+            ctypes.sizeof(value),
+        )
+
+    def switchTheme(self):
+        self._model.setTheme('light' if self._model.getTheme() == 'dark' else 'dark')
+        self.loadTheme()

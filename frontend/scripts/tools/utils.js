@@ -125,15 +125,15 @@ export async function load_theme() {
 
 async function _load_theme() {
     if (!localStorage.theme)
-        localStorage.theme = await window.pywebview.api.model.getTheme();
+        localStorage.theme = await pywebview.api.model.getTheme();
     $('html').attr('data-bs-theme', localStorage.theme);
 }
 
-export async function set_theme(theme) {
-    $('html').attr('data-bs-theme', theme);
-    await window.pywebview.api.model.setTheme(theme);
-}
-
 export async function switch_theme() {
-    await set_theme($('html').attr('data-bs-theme') == 'dark'? 'light' : 'dark');
+    const jquery = $('html');
+    const theme = jquery.attr('data-bs-theme') == 'dark'? 'light' : 'dark';
+    
+    jquery.attr('data-bs-theme', theme);
+    localStorage.theme = theme;
+    await pywebview.api.switchTheme();
 }

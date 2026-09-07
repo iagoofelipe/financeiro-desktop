@@ -1,6 +1,6 @@
 import { load_theme, MODAL_FLAGS, set_modal } from "./tools/utils.js";
 
-await load_theme();
+// await load_theme();
 
 $('#btn-auth').on('click', on_auth);
 $('#btn-create').on('click', on_create);
@@ -18,7 +18,7 @@ async function on_auth() {
     const form_controls = $('#login-inputs .form-control, #login-inputs .btn');
     form_controls.prop('disabled', true);
 
-    let response = await window.pywebview.api.model.auth(username, password, remember);
+    let response = await pywebview.api.model.auth(username, password, remember);
     form_controls.prop('disabled', false);
 
     if (!response) {
@@ -54,7 +54,7 @@ export async function on_create() {
 
     delete inputs.password_confirm;
     inp_components.prop('disabled', true);
-    let response = await window.pywebview.api.model.createAccount(inputs);
+    let response = await pywebview.api.model.createAccount(inputs);
     
     inp_components.prop('disabled', false);
     if (!response.success) {

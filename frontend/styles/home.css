@@ -18,9 +18,9 @@ main {
     }
 }
 
-.home-nav:not(.offcanvas) {
+/* .home-nav:not(.offcanvas) {
     width: 290px !important;
-}
+} */
 
 .home-nav {
     .nav-link {
@@ -44,7 +44,7 @@ main {
     }
 }
 
-.home-nav.collapsed {
+/* .home-nav.collapsed {
     width: 96px !important;
     
     span, .home-nav-logo, .icon-panel-opened {
@@ -54,7 +54,7 @@ main {
     .icon-panel-closed {
         display: block;
     }
-}
+} */
 
 .nav-link-active {
     background-color: var(--primary-color);
@@ -127,9 +127,9 @@ main {
     } */
 }
 
-.home-nav:not(.offcanvas) {
+/* .home-nav:not(.offcanvas) {
     display: none !important;
-}
+} */
 
 /* Mobile */
 @media screen and (max-width: 767px) {

@@ -3,38 +3,32 @@
 }
 
 :root[data-bs-theme=dark] {
-    --bs-body-bg: #202020;
-    /* --bs-card-bg: #2c2c2c; */
+    --bs-body-bg: #121212;
+    --bs-body-bg-rgb: 18, 18, 18;
+    --bs-border-color: #ffffff1a;
+    --bs-border-color-translucent: #ffffff1a;
+
+    --body-bg: #000;
+    --subtitle-color: #8D8D8D;
+
+    scrollbar-color: #3B3B3B transparent;
 }
 
-/* .card {
-    --bs-card-bg: #2c2c2c;
-} */
+:root[data-bs-theme=light] {
+    --body-bg: #F5F5F5;
+    --subtitle-color: #717171;
+
+    scrollbar-color: #C2C2C2 transparent;
+}
 
 body {
-    padding: 1rem;
-    background: rgba(0, 0, 0, 0.04);
+    padding: 10px;
+    background: var(--body-bg);
 }
 
 * {
     font-family: 'Roboto', sans-serif;
     font-weight: 400;
-}
-
-.h-line {
-    width: stretch;
-    height: 1px;
-    background-color: #000;
-    opacity: .25;
-    margin: 1rem 0;
-}
-
-.v-line {
-    width: 1px;
-    height: stretch;
-    background-color: #000;
-    opacity: .25;
-    margin: 0 1rem;
 }
 
 .title, .title-1 {
@@ -46,7 +40,7 @@ body {
 }
 
 .title-3, .title-3-bold {
-    color: #8D8D8D;
+    color: var(--subtitle-color);
     font-size: .9rem;
     font-weight: 400;
 }
@@ -73,35 +67,28 @@ body {
     color: #ffff;
 }
 
-.h-line-ignore-parent-padding {
-    margin-inline-start: -1rem !important;
-    margin-inline-end: -1rem !important;
-}
-
-.v-line-ignore-parent-padding {
-    margin-top: -1rem !important;
-    margin-bottom: -1rem !important;
-}
-
 .btn-outline {
-    background-color: var(--bs-body-bg);
-    /* color: var(--bs-secondary-color); */
+    background-color: transparent;
     border: .5px solid var(--bs-border-color);
     border-radius: var(--bs-btn-border-radius);
-
     font-size: 11pt;
+}
+
+.btn-outline-active {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
 }
 
 .btn-outline:has(svg) {
     padding: .5rem;
 }
 
-.btn-rotate * {
+.btn-rotate {
     transition: transform 0.5s ease;
     display: inline-block;
 }
 
-.btn-rotated * {
+.btn-rotated {
     transform: rotate(180deg);
 }
 
@@ -145,4 +132,10 @@ body {
 
 .icon-progress, .icon-not-progress {
     width: 20px !important;
+}
+
+.card-counter {
+    background-color: var(--bs-border-color);
+    border-radius: 50%;
+    min-width: 29px;
 }

@@ -3,7 +3,7 @@ import DashboardView from "./navdash.js";
 import { load_theme, replace_from_url, switch_theme } from "./tools/utils.js";
 // import CreditCardView from "./cards.js";
 
-await load_theme();
+// await load_theme();
 
 class IView {
     setOfflineMode() { throw new Error("NOT_IMPLEMENTED"); }
@@ -11,51 +11,105 @@ class IView {
 
 class HomeView
 {
-    constructor() {
-        // configurando nav-btns
+    #date_ref;
+    #view;
+    #minsLastUpdate;
+    #timeoutId;
+
+    constructor(user, year_month) {
         let nav_btns = $('.home-nav .nav-link');
+        const jdate_ref = $('#filter-month-year');
+
+        // atualizando valores
+        $('.user-full-name').text(user);
+        jdate_ref.val(year_month);
+        this.#date_ref = year_month + '-01';
+        this.#minsLastUpdate = 0;
         
-        nav_btns.on('click', async (evt) => await this.#on_navBtn_clicked(evt));
-        $(nav_btns[0]).click();
-
         // vinculando eventos
-        $('#btn-nav-collapse').click(this.#on_btnNavCollapse_clicked);
-        $('#btn-theme').click(async () => await switch_theme());
-
+        nav_btns.on('click', async (evt) => await this.#on_navBtn_clicked(evt));
+        // $('#btn-nav-collapse').click(this.#on_btnNavCollapse_clicked);
+        $('#btn-theme').click(switch_theme);
+        $('#btn-sync').click(async () => await this.syncData());
         $('.home-nav.offcanvas .nav-link').click(() => { $('.home-nav.offcanvas .close').click() });
+        jdate_ref.on('change', async (e) => await this.#on_filterDateRef_changed(e));
+        
+        // selecionando primeira nav
+        $(nav_btns[0]).click();
     }
 
+    //-----------------------------------------------------------------------------
+    // Métodos Públicos - Estáticos
     static async create() {
         await replace_from_url(document);
 
-        $('.user-full-name').text(await window.pywebview.api.model.getUserFullName());
-        $('#filter-month-year').val(await window.pywebview.api.model.getDefaultYearMonth());
+        // coletando dados do backend
+        const user = await pywebview.api.model.getUserFullName();
+        const year_month = await pywebview.api.model.getDefaultYearMonth();
         
-        return new HomeView();
+        window.view = new HomeView(user, year_month);
+
+        return window.view;
     }
 
+    //-----------------------------------------------------------------------------
+    // Métodos Públicos
     async logout() {
-        await window.pywebview.api.model.logout();
+        await pywebview.api.model.logout();
         window.location.href = '/ui/login.html';
     }
 
+    async syncData() {
+        $('#last-update').text('atualizando dados...');
+        await this.#view.syncData(this.#date_ref);
+        this.#minsLastUpdate = 0;
+        $('#last-update').text('atualizado há menos de 1min');
+        this.#timeoutId = setInterval(async () => await this.#on_syncData_timeout(), 60000);
+    }
+
+    async #on_syncData_timeout() {
+        this.#minsLastUpdate++;
+        if (this.#minsLastUpdate >= 60) {
+            $('#last-update').text('atualizado há mais de 1h atrás');
+            clearTimeout(this.#timeoutId); // trava a mensagem
+        }
+        else {
+            $('#last-update').text(`atualizado ${this.#minsLastUpdate}min atrás`);
+        }
+    }
+
+    setOfflineMode(arg) {
+        if (arg)
+            this.toastMessage('Erro de Conexão', 'agora', 'Não foi possível processar a solicitação, aguardando reconexão...');
+        else    
+            this.toastMessage('Conexão Reestabelecida', 'agora', 'A conexão foi retomada com sucesso');
+    }
+
+    toastMessage(title, subtitle, msg) {
+        $('.toast-title').text(title);
+        $('.toast-subtitle').text(subtitle);
+        $('.toast-body').text(msg);
+
+        const toastLiveExample = document.getElementById('liveToast');
+        const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample);
+        toastBootstrap.show();
+    }
+
+    //-----------------------------------------------------------------------------
+    // Eventos
     async #on_navBtn_clicked(evt) {
         evt.preventDefault();
 
         let jbtn = $(evt.currentTarget);
         let title = jbtn.prop('name');
-        let jfilter_month_year = $('#filter-month-year');
-
-        // atualizando conteúdo
-        let new_widget;
 
         switch (title) {
         case 'Dashboards':
-            new_widget = await DashboardView.create(jfilter_month_year);
+            this.#view = await DashboardView.create();
             break;
 
         // case 'Registros':
-        //     new_widget = await RegistryView.create(jfilter_month_year);
+        //     this.#view = await RegistryView.create();
         //     break;
 
         // case 'Cartões e Faturas':
@@ -72,25 +126,37 @@ class HomeView
         }
         
         $('#home-title').text(title); // atualizando título
-        this.#update_nav_button(title); // atualizando botão selecionado
+
+        // atualizando botão selecionado
+        $('.home-nav .nav-link-active').removeClass('nav-link-active');
+        $(`.home-nav .nav-link[name="${title}"]`).addClass('nav-link-active');
         
         // atualizando conteúdo
-        let jquery = new_widget.jquery();
+        let jquery = this.#view.jquery();
         $('#home-content').html(jquery);
-        $('#home-navtop').html(jquery.find('#home-navtop-content'));
+
+        let navtop = jquery.find('#home-navtop-content');
+        if (navtop.length)
+            $('#home-navtop').html(navtop).show();
+        else
+            $('#home-navtop').hide();
+
+        // atualizando dados
+        await this.syncData();
     }
 
-    #update_nav_button(name) {
-        $('.home-nav .nav-link-active').removeClass('nav-link-active');
-        $(`.home-nav .nav-link[name="${name}"]`).addClass('nav-link-active');
-    }
+    // #on_btnNavCollapse_clicked(evt) {
+    //     $('.home-nav').toggleClass('collapsed');
+    // }
 
-    #on_btnNavCollapse_clicked(evt) {
-        $('.home-nav').toggleClass('collapsed');
+    async #on_filterDateRef_changed(evt) {
+        this.#date_ref = evt.currentTarget.value + '-01';
+        await this.syncData();
     }
+    //-----------------------------------------------------------------------------
 }
 
 if (window.pywebview && window.pywebview.api)
-        window.homeView = await HomeView.create();
+        await HomeView.create();
     else
-        window.addEventListener('pywebviewready', async () => window.homeView = await HomeView.create());
+        window.addEventListener('pywebviewready', HomeView.create);

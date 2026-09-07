@@ -1,9 +1,9 @@
 <div class="container-dash d-flex flex-column row-gap-3 h-100">
-    <div class="top-cards card">
+    <div class="card-values card">
         <div class="d-flex justify-content-evenly content overflow-x-auto p-3">
             <div class="d-flex">
                 <img src="/imgs/money-in.svg">
-                <div class="ms-2 d-flex flex-column justify-content-center" style="width: 260px;">
+                <div class="ms-2 d-flex flex-column justify-content-center">
                     <span class="title-3-bold">Entradas</span>
                     <div>
                         <span class="title-3-bold">R$</span>
@@ -18,7 +18,7 @@
             </div>
             <div class="d-flex">
                 <img src="/imgs/money-out.svg">
-                <div class="ms-2 d-flex flex-column justify-content-center" style="width: 260px;">
+                <div class="ms-2 d-flex flex-column justify-content-center">
                     <span class="title-3-bold">Saídas</span>
                     <div>
                         <span class="title-3-bold">R$</span>
@@ -33,7 +33,7 @@
             </div>
             <div class="d-flex">
                 <img src="/imgs/balance.svg">
-                <div class="ms-2 d-flex flex-column justify-content-center" style="width: 140px;">
+                <div class="ms-2 d-flex flex-column justify-content-center">
                     <span class="title-3-bold">Saldo</span>
                     <div>
                         <span class="title-3-bold">R$</span>
@@ -74,23 +74,29 @@
         <div class="d-flex justify-content-between align-items-center">
             <div class="d-flex">
                 <span class="title pe-2">Transações</span>
-                <p class="p-1 m-0 text-center" id="num-transactions" style="background-color: var(--bs-border-color); border-radius: 50%; min-width: 29px;">0</p>
+                <p class="p-1 m-0 text-center card-counter" id="num-transactions">0</p>
             </div>
-            <select class="form form-select w-auto" id="filter-transaction" title="Tipo" connection-trigger>
-                <option value="" hidden>Tipo</option>
-                <option value="in">Entrada</option>
-                <option value="out" selected>Saída</option>
-            </select>
-            <div class="input-group flex-nowrap w-auto" id="filter-transaction-group">
-                <select class="form form-select w-auto" title="Cartões" connection-trigger>
+
+            <!-- alinhados a direita -->
+            <div class="d-flex column-gap-3">
+                <select class="form form-select w-auto" id="filter-transaction" title="Tipo" connection-trigger>
+                    <option value="" hidden>Tipo</option>
                     <option value="in">Entrada</option>
                     <option value="out" selected>Saída</option>
                 </select>
-                <div class="input-group-text p-0 ps-2 pe-2">
-                    <button type="button" class="btn-close" aria-label="Close" id="btn-filter-transaction-group" connection-trigger></button>
+                <div class="input-group flex-nowrap w-auto" id="filter-transaction-group">
+                    <select class="form form-select w-auto" title="Cartões" connection-trigger>
+                        <option value="in">Entrada</option>
+                        <option value="out" selected>Saída</option>
+                    </select>
+                    <div class="input-group-text p-0 ps-2 pe-2">
+                        <button type="button" class="btn border-0 p-0" aria-label="Close" id="btn-filter-transaction-group" connection-trigger><div class="replace" url="/imgs/icons/x.svg"></div></button>
+                    </div>
                 </div>
             </div>
         </div>
-        <div id="container-transactions-content" class="overflow-auto mt-3"></div>
+        <div id="container-transactions-content" class="overflow-auto mt-3 d-flex flex-column row-gap-3"></div>
     </div>
 </div>
+
+<link rel="stylesheet" href="/styles/navdash.css">

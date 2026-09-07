@@ -1,0 +1,40 @@
+:root[data-bs-theme=dark] {
+    --dash-first-card-bg: #2b362c;
+}
+
+:root[data-bs-theme=light] {
+    --dash-first-card-bg: #d1e4d2;
+}
+
+.card-values {
+    background: var(--dash-first-card-bg);
+}
+
+.transaction-item {
+    
+}
+
+.transaction-item-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.transaction-item-desc-icon {
+    width: 20px;
+    height: 20px;
+}
+.transaction-item-desc-icon, .transaction-item-desc-text, .transaction-item-coin {
+    color: var(--subtitle-color);
+}
+
+.transaction-item-value {
+    font-size: 1.7rem;
+}
+
+.transaction-item-value[data-type-in=true] {
+    color: var(--bs-success);
+}
+
+.transaction-item-value[data-type-in=false] {
+    color: var(--bs-danger);
+}
