@@ -186,7 +186,7 @@ export default class DashboardView {
                 jquery_container.append(html_item
                     .replaceAll('{{TITLE}}', item.title)
                     .replaceAll('{{TITLE_HIDDEN}}', '')
-                    .replaceAll('{{DATE}}', item.occurrance_formatted.substring(0, 9))
+                    .replaceAll('{{DATE}}', item.occurrence_formatted.substring(0, 9))
                     .replaceAll('{{RESPONSABLE}}', item.responsable_name)
                     .replaceAll('{{RESPONSABLE_HIDDEN}}', item.responsable_name? '' : 'd-none')
                     .replaceAll('{{CARD}}', item.installment_formatted)
@@ -211,7 +211,7 @@ export default class DashboardView {
                     jquery_group_container_items.append(html_item
                         .replaceAll('{{TITLE}}', item.title)
                         .replaceAll('{{TITLE_HIDDEN}}', 'hidden')
-                        .replaceAll('{{DATE}}', item.occurrance_formatted.substring(0, 9))
+                        .replaceAll('{{DATE}}', item.occurrence_formatted.substring(0, 9))
                         .replaceAll('{{RESPONSABLE}}', item.responsable_name)
                         .replaceAll('{{RESPONSABLE_HIDDEN}}', item.responsable_name? '' : 'd-none')
                         .replaceAll('{{CARD}}', item.installment_formatted)
